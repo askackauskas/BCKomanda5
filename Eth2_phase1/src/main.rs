@@ -53,12 +53,11 @@ pub mod forkchoice {
     #[derive(Debug)]
     pub struct SignedShardBlock {
         pub message: ShardBlock,
-        pub signature: u64, //FAKE-BLS
     }
 
     impl PartialEq for SignedShardBlock {
         fn eq(&self, other: &Self) -> bool {
-            self.message == other.message && self.signature == other.signature
+            self.message == other.message
         }
     }
     pub fn compute_previous_slot(slot: Slot) -> Slot {
@@ -74,10 +73,7 @@ pub mod forkchoice {
             slot: compute_previous_slot(anchor_state.slot),
             shard,
         };
-        let ssb = SignedShardBlock {
-            message: sb,
-            signature: 1,
-        };
+        let ssb = SignedShardBlock { message: sb };
         let mut map = HashMap::new();
         map.insert(
             anchor_state.shard_states[shard as usize].latest_block_root,
@@ -124,12 +120,11 @@ pub mod tests {
             shard_states: vec![shard_state],
         };
         let shard_block = ShardBlock {
-            slot: 2,
+            slot: 1,
             shard: test_shard,
         };
         let signed_shard_block = SignedShardBlock {
             message: shard_block,
-            signature: 3,
         };
         let mut signed_blocks = HashMap::new();
         signed_blocks.insert(
