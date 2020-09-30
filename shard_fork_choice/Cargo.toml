@@ -1,5 +1,5 @@
 [package]
-name = "Eth2_phase1"
+name = "shard_fork_choice"
 version = "0.1.0"
 authors = ["intager S <intagers@gmail.com>"]
 edition = "2018"
