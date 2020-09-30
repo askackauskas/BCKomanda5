@@ -10,21 +10,10 @@ pub struct BeaconState {
     pub shard_states: Vec<ShardState>, //should be VariableList??
 }
 
-impl Clone for BeaconState {
-    fn clone(&self) -> Self {
-        *self
-    }
-}
-
+#[derive(Clone, Copy)]
 pub struct ShardState {
     pub shard: Shard,
     pub latest_block_root: H256,
-}
-
-impl Clone for ShardState {
-    fn clone(&self) -> Self {
-        *self
-    }
 }
 
 pub struct ShardStore {
@@ -43,12 +32,17 @@ pub struct SignedShardBlock {
     signature: u64, //FAKE-BLS
 }
 pub fn compute_previous_slot(slot: Slot) -> Slot {
-    slot
+    if slot > 0 {
+        slot - 1
+    } else {
+        slot
+    }
 }
+
 pub fn get_forkchoice_shard_store(anchor_state: BeaconState, shard: Shard) -> ShardStore {
     let sb = ShardBlock {
         slot: compute_previous_slot(anchor_state.slot),
-        shard: shard,
+        shard,
     };
     let ssb = SignedShardBlock {
         message: sb,
@@ -57,30 +51,21 @@ pub fn get_forkchoice_shard_store(anchor_state: BeaconState, shard: Shard) -> Sh
     let mut map = HashMap::new();
     map.insert(
         anchor_state
-            .shard_states
-            .iter()
-            .find(|&&x| shard == shard)
-            .unwrap()
+            .shard_states[shard as usize]
             .latest_block_root,
         ssb,
     );
     let mut map2: HashMap<ethereum_types::H256, ShardState> = HashMap::new();
     map2.insert(
         anchor_state
-            .shard_states
-            .iter()
-            .find(|&&x| shard == shard)
-            .unwrap()
+            .shard_states[shard as usize]
             .latest_block_root,
         anchor_state
             .clone()
-            .shard_states()
-            .iter()
-            .find(|&&x| shard == shard)
-            .unwrap(),
+            .shard_states[shard as usize],
     );
     ShardStore {
-        shard: shard,
+        shard,
         signed_blocks: { map },
         block_states: { map2 },
     }
