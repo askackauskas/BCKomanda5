@@ -8,3 +8,4 @@ edition = "2018"
 
 [dependencies]
 ethereum-types = '0.9'
+bls_eth_rust = { git = 'https://github.com/sifraihq/bls-eth-rust' }

@@ -1,12 +1,22 @@
+// TO DO: put types in a separate crate
+
 pub type Shard = u64;
 pub type Slot = u64;
 use ethereum_types::H256;
 use std::collections::HashMap;
+use crate::config::MAX_SHARDS;
 
-#[derive(Clone)]
+// Signature
+#[derive(Debug)]
+pub enum SignatureBytes{
+    Placeholder,
+}
+
+// Beacon State + Shard State types
+
 pub struct BeaconState {
     pub slot: Slot,
-    pub shard_states: Vec<ShardState>, //should be VariableList??
+    pub shard_states: [ShardState; MAX_SHARDS as usize],
 }
 
 #[derive(Clone, Copy, Debug)]
@@ -51,7 +61,7 @@ impl PartialEq for ShardBlock {
 #[derive(Debug)]
 pub struct SignedShardBlock {
     pub message: ShardBlock,
-    //signature: BLSSignature,
+    pub signature: SignatureBytes,
 }
 
 impl PartialEq for SignedShardBlock {

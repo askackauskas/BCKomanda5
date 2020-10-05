@@ -1,6 +1,3 @@
-// This is for large integration testing
-
-use shard_fork_choice::types::*;
 use shard_fork_choice::*;
 use std::collections::HashMap;
 use ethereum_types::H256;
@@ -17,7 +14,7 @@ fn get_forkchoice_shard_store_test() {
     };
     let beacon_state = BeaconState {
         slot: 2,
-        shard_states: vec![shard_state],
+        shard_states: [shard_state; 1024],
     };
     let shard_block = ShardBlock {
         slot: 1,
@@ -25,6 +22,7 @@ fn get_forkchoice_shard_store_test() {
     };
     let signed_shard_block = SignedShardBlock {
         message: shard_block,
+        signature: SignatureBytes::Placeholder,
     };
     let mut signed_blocks = HashMap::new();
     signed_blocks.insert(
@@ -34,7 +32,7 @@ fn get_forkchoice_shard_store_test() {
     let mut block_states: HashMap<ethereum_types::H256, ShardState> = HashMap::new();
     block_states.insert(
         beacon_state.shard_states[test_shard as usize].latest_block_root,
-        beacon_state.clone().shard_states[test_shard as usize],
+        beacon_state.shard_states[test_shard as usize],
     );
     let shard_store = ShardStore {
         shard: test_shard,
