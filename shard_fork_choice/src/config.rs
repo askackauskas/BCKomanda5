@@ -1,0 +1,4 @@
+let MAX_SHARDS = uint64(2**10) //(= 1024)
+let INITIAL_ACTIVE_SHARDS = uint64(2**6) //(= 64)
+let LIGHT_CLIENT_COMMITTEE_SIZE = uint64(2**7) //(= 128)
+let GASPRICE_ADJUSTMENT_COEFFICIENT = uint64(2**3) //(= 8)

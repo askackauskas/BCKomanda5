@@ -1,9 +1,9 @@
 // This is for large integration testing
 
+use shard_fork_choice::types::*;
 use shard_fork_choice::*;
 use std::collections::HashMap;
-
-pub use ethereum_types::H256;
+use ethereum_types::H256;
 
 #[test]
 fn get_forkchoice_shard_store_test() {
