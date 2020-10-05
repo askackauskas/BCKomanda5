@@ -45,7 +45,7 @@ pub fn get_forkchoice_shard_store(anchor_state: BeaconState, shard: Shard) -> Sh
     }
 }
 
-// This is for small unit tests
+// This is for small unit tests, for large integration testing go to tests/ folder
 #[cfg(test)]
 mod tests {
     /*
