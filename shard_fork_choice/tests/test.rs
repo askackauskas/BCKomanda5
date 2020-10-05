@@ -3,8 +3,6 @@
 use shard_fork_choice::*;
 use std::collections::HashMap;
 
-pub type Shard = u64;
-pub type Slot = u64;
 pub use ethereum_types::H256;
 
 #[test]

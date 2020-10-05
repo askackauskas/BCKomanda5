@@ -59,6 +59,7 @@ impl PartialEq for SignedShardBlock {
         self.message == other.message
     }
 }
+
 pub fn compute_previous_slot(slot: Slot) -> Slot {
     if slot > 0 {
         slot - 1
