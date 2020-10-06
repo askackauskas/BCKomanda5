@@ -2,6 +2,7 @@ mod types;
 mod config;
 
 pub use types::*;
+pub use config::*;
 use std::collections::HashMap;
 
 pub fn compute_previous_slot(slot: Slot) -> Slot {
@@ -22,26 +23,28 @@ pub fn compute_previous_slot(slot: Slot) -> Slot {
         },
         block_states={anchor_state.shard_states[shard].latest_block_root: anchor_state.copy().shard_states[shard]},
     )*/
-pub fn get_forkchoice_shard_store(anchor_state: BeaconState, shard: Shard) -> ShardStore {
-    let sb = ShardBlock {
+
+pub fn get_forkchoice_shard_store(anchor_state: &BeaconState, shard: Shard) -> ShardStore {
+    let shard_block = ShardBlock {
         slot: compute_previous_slot(anchor_state.slot),
         shard,
     };
-    let ssb = SignedShardBlock { message: sb, signature: SignatureBytes::Placeholder};
-    let mut map = HashMap::new();
-    map.insert(
+    let signed_shard_block = SignedShardBlock { message: shard_block, signature: SignatureBytes::Placeholder };
+    let mut signed_blocks = HashMap::new();
+    signed_blocks.insert(
         anchor_state.shard_states[shard as usize].latest_block_root,
-        ssb,
+        signed_shard_block,
     );
-    let mut map2: HashMap<ethereum_types::H256, ShardState> = HashMap::new();
-    map2.insert(
+    let mut block_states: HashMap<ethereum_types::H256, ShardState> = HashMap::new();
+    block_states.insert(
         anchor_state.shard_states[shard as usize].latest_block_root,
-        anchor_state.shard_states[shard as usize],
+        anchor_state.clone().shard_states[shard as usize],
     );
     ShardStore {
         shard,
-        signed_blocks: { map },
-        block_states: { map2 },
+        signed_blocks: { signed_blocks },
+        block_states: { block_states },
+        ..Default::default()
     }
 }
 

@@ -31,11 +31,12 @@ impl PartialEq for ShardState {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct ShardStore {
     pub shard: Shard,
     pub signed_blocks: HashMap<H256, SignedShardBlock>,
     pub block_states: HashMap<H256, ShardState>,
+    pub latest_messages: i32
 }
 
 impl PartialEq for ShardStore {

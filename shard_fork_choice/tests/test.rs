@@ -1,6 +1,6 @@
 use shard_fork_choice::*;
 use std::collections::HashMap;
-use ethereum_types::H256;
+pub use ethereum_types::H256;
 
 #[test]
 fn get_forkchoice_shard_store_test() {
@@ -8,8 +8,8 @@ fn get_forkchoice_shard_store_test() {
     let shard_state = ShardState {
         shard: test_shard,
         latest_block_root: H256([
-            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-            1, 1, 1, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 1, 1,
         ]),
     };
     let beacon_state = BeaconState {
@@ -22,7 +22,7 @@ fn get_forkchoice_shard_store_test() {
     };
     let signed_shard_block = SignedShardBlock {
         message: shard_block,
-        signature: SignatureBytes::Placeholder,
+        signature: SignatureBytes::Placeholder
     };
     let mut signed_blocks = HashMap::new();
     signed_blocks.insert(
@@ -38,10 +38,11 @@ fn get_forkchoice_shard_store_test() {
         shard: test_shard,
         signed_blocks,
         block_states,
+        ..Default::default()
     };
 
     assert_eq!(
-        get_forkchoice_shard_store(beacon_state, test_shard),
+        get_forkchoice_shard_store(&beacon_state, test_shard),
         shard_store
     );
 }
