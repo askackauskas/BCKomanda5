@@ -22,11 +22,12 @@ impl PartialEq for ShardState {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct ShardStore {
     pub shard: Shard,
-    pub signed_blocks: HashMap<H256, SignedShardBlock>,
+    pub signed_blocks: HashMap<H256, SignedShardBlock>, 
     pub block_states: HashMap<H256, ShardState>,
+    pub latest_messages: i32
 }
 
 impl PartialEq for ShardStore {
@@ -51,7 +52,7 @@ impl PartialEq for ShardBlock {
 
 #[derive(Debug)]
 pub struct SignedShardBlock {
-    pub message: ShardBlock,
+    pub message: ShardBlock, // FIGURE OUT AUTO SIGNATURE / THINK ABOUT LIFETIMES
 }
 
 impl PartialEq for SignedShardBlock {
@@ -68,26 +69,27 @@ pub fn compute_previous_slot(slot: Slot) -> Slot {
     }
 }
 
-pub fn get_forkchoice_shard_store(anchor_state: BeaconState, shard: Shard) -> ShardStore {
-    let sb = ShardBlock {
+pub fn get_forkchoice_shard_store(anchor_state: &BeaconState, shard: Shard) -> ShardStore {
+    let shard_block = ShardBlock {
         slot: compute_previous_slot(anchor_state.slot),
         shard,
     };
-    let ssb = SignedShardBlock { message: sb };
-    let mut map = HashMap::new();
-    map.insert(
+    let signed_shard_block = SignedShardBlock { message: shard_block };
+    let mut signed_blocks = HashMap::new();
+    signed_blocks.insert(
         anchor_state.shard_states[shard as usize].latest_block_root,
-        ssb,
+        signed_shard_block,
     );
-    let mut map2: HashMap<ethereum_types::H256, ShardState> = HashMap::new();
-    map2.insert(
+    let mut block_states: HashMap<ethereum_types::H256, ShardState> = HashMap::new();
+    block_states.insert(
         anchor_state.shard_states[shard as usize].latest_block_root,
         anchor_state.clone().shard_states[shard as usize],
     );
     ShardStore {
         shard,
-        signed_blocks: { map },
-        block_states: { map2 },
+        signed_blocks: { signed_blocks },
+        block_states: { block_states },
+        ..Default::default()
     }
 }
 
