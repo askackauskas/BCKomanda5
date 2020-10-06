@@ -25,9 +25,9 @@ impl PartialEq for ShardState {
 #[derive(Debug, Default)]
 pub struct ShardStore {
     pub shard: Shard,
-    pub signed_blocks: HashMap<H256, SignedShardBlock>, 
+    pub signed_blocks: HashMap<H256, SignedShardBlock>,
     pub block_states: HashMap<H256, ShardState>,
-    pub latest_messages: i32
+    pub latest_messages: i32,
 }
 
 impl PartialEq for ShardStore {
@@ -50,14 +50,30 @@ impl PartialEq for ShardBlock {
     }
 }
 
+impl ShardBlock {
+    pub fn new(slot: Slot, shard: Shard) -> ShardBlock {
+        ShardBlock {
+            slot: slot,
+            shard: shard,
+        }
+    }
+}
+
 #[derive(Debug)]
 pub struct SignedShardBlock {
-    pub message: ShardBlock, // FIGURE OUT AUTO SIGNATURE / THINK ABOUT LIFETIMES
+    pub message: ShardBlock,
 }
 
 impl PartialEq for SignedShardBlock {
     fn eq(&self, other: &Self) -> bool {
         self.message == other.message
+    }
+}
+
+impl SignedShardBlock {
+    pub fn new(message: ShardBlock) -> SignedShardBlock {
+        SignedShardBlock { message: message }
+        //SignedShardBlock{message: message, signature: *YOUR SIGNATURE FUNCTION HERE*}
     }
 }
 
@@ -70,11 +86,8 @@ pub fn compute_previous_slot(slot: Slot) -> Slot {
 }
 
 pub fn get_forkchoice_shard_store(anchor_state: &BeaconState, shard: Shard) -> ShardStore {
-    let shard_block = ShardBlock {
-        slot: compute_previous_slot(anchor_state.slot),
-        shard,
-    };
-    let signed_shard_block = SignedShardBlock { message: shard_block };
+    let shard_block = ShardBlock::new(compute_previous_slot(anchor_state.slot), shard);
+    let signed_shard_block = SignedShardBlock::new(shard_block);
     let mut signed_blocks = HashMap::new();
     signed_blocks.insert(
         anchor_state.shard_states[shard as usize].latest_block_root,

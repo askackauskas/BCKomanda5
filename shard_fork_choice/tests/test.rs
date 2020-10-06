@@ -19,13 +19,8 @@ fn get_forkchoice_shard_store_test() {
         slot: 2,
         shard_states: vec![shard_state],
     };
-    let shard_block = ShardBlock {
-        slot: 1,
-        shard: test_shard,
-    };
-    let signed_shard_block = SignedShardBlock {
-        message: shard_block,
-    };
+    let shard_block = ShardBlock::new(1, test_shard);
+    let signed_shard_block = SignedShardBlock::new(shard_block);
     let mut signed_blocks = HashMap::new();
     signed_blocks.insert(
         beacon_state.shard_states[test_shard as usize].latest_block_root,
