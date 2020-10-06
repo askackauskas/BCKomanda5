@@ -53,8 +53,8 @@ impl PartialEq for ShardBlock {
 impl ShardBlock {
     pub fn new(slot: Slot, shard: Shard) -> ShardBlock {
         ShardBlock {
-            slot: slot,
-            shard: shard,
+            slot,
+            shard,
         }
     }
 }
@@ -72,8 +72,8 @@ impl PartialEq for SignedShardBlock {
 
 impl SignedShardBlock {
     pub fn new(message: ShardBlock) -> SignedShardBlock {
-        SignedShardBlock { message: message }
-        //SignedShardBlock{message: message, signature: *YOUR SIGNATURE FUNCTION HERE*}
+        SignedShardBlock { message }
+        //SignedShardBlock{message, signature: *YOUR SIGNATURE FUNCTION HERE*}
     }
 }
 
@@ -109,10 +109,13 @@ pub fn get_forkchoice_shard_store(anchor_state: &BeaconState, shard: Shard) -> S
 // This is for small unit tests
 #[cfg(test)]
 mod tests {
-    /*
+    use crate::*;
     #[test]
-    fn new_test() {
-        assert_eq!(2 + 2, 4);
+    fn test_previous_slot() {
+        let five: Slot = 5;
+        let six: Slot = 6;
+        let zero: Slot = 0;
+        assert_eq!(compute_previous_slot(six), five);
+        assert_eq!(compute_previous_slot(zero), zero);
     }
-    */
 }
