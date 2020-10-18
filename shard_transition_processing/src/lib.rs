@@ -1,12 +1,10 @@
 
-pub fn it_works() -> bool {
-    true
-}
+
 
 #[cfg(test)]
 mod tests {
     #[test]
-    fn it_works() {
+    fn test_function_a() {
         assert_eq!(2 + 2, 4);
     }
 }

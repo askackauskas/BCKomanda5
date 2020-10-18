@@ -1,79 +1,24 @@
-use std::collections::HashMap;
-
-pub type Shard = u64;
-pub type Slot = u64;
-pub use ethereum_types::H256;
-
-#[derive(Clone)]
-pub struct BeaconState {
-    pub slot: Slot,
-    pub shard_states: Vec<ShardState>, //should be VariableList??
-}
-
-#[derive(Clone, Copy, Debug)]
-pub struct ShardState {
-    pub shard: Shard,
-    pub latest_block_root: H256,
-}
-
-impl PartialEq for ShardState {
-    fn eq(&self, other: &Self) -> bool {
-        self.shard == other.shard && self.latest_block_root == other.latest_block_root
-    }
-}
+pub use std::collections::HashMap;
+pub use types::{
+    beacon_state::BeaconState,
+    config::Config,
+    containers::{ShardBlock, SignedShardBlock, ShardState},
+    primitives::{Shard, Slot, H256, Root},
+};
 
 #[derive(Debug, Default)]
-pub struct ShardStore {
+pub struct ShardStore<C: Config> {
     pub shard: Shard,
-    pub signed_blocks: HashMap<H256, SignedShardBlock>,
-    pub block_states: HashMap<H256, ShardState>,
+    pub signed_blocks: HashMap<Root, SignedShardBlock<C>>,
+    pub block_states: HashMap<Root, ShardState>,
     pub latest_messages: i32,
 }
 
-impl PartialEq for ShardStore {
+impl<C: Config> PartialEq for ShardStore<C> {
     fn eq(&self, other: &Self) -> bool {
         self.shard == other.shard
             && self.signed_blocks == other.signed_blocks
             && self.block_states == other.block_states
-    }
-}
-
-#[derive(Debug)]
-pub struct ShardBlock {
-    pub slot: Slot,
-    pub shard: Shard,
-}
-
-impl PartialEq for ShardBlock {
-    fn eq(&self, other: &Self) -> bool {
-        self.slot == other.slot && self.shard == other.shard
-    }
-}
-
-impl ShardBlock {
-    pub fn new(slot: Slot, shard: Shard) -> ShardBlock {
-        ShardBlock {
-            slot,
-            shard,
-        }
-    }
-}
-
-#[derive(Debug)]
-pub struct SignedShardBlock {
-    pub message: ShardBlock,
-}
-
-impl PartialEq for SignedShardBlock {
-    fn eq(&self, other: &Self) -> bool {
-        self.message == other.message
-    }
-}
-
-impl SignedShardBlock {
-    pub fn new(message: ShardBlock) -> SignedShardBlock {
-        SignedShardBlock { message }
-        //SignedShardBlock{message, signature: *YOUR SIGNATURE FUNCTION HERE*}
     }
 }
 
@@ -85,33 +30,56 @@ pub fn compute_previous_slot(slot: Slot) -> Slot {
     }
 }
 
-pub fn get_forkchoice_shard_store(anchor_state: &BeaconState, shard: Shard) -> ShardStore {
-    let shard_block = ShardBlock::new(compute_previous_slot(anchor_state.slot), shard);
-    let signed_shard_block = SignedShardBlock::new(shard_block);
-    let mut signed_blocks = HashMap::new();
+/*
+def get_forkchoice_shard_store(anchor_state: BeaconState, shard: Shard) -> ShardStore:
+    return ShardStore(
+        shard=shard,
+        signed_blocks={
+            anchor_state.shard_states[shard].latest_block_root: SignedShardBlock(
+                message=ShardBlock(slot=compute_previous_slot(anchor_state.slot), shard=shard)
+            )
+        },
+        block_states={anchor_state.shard_states[shard].latest_block_root: anchor_state.copy().shard_states[shard]},
+    )
+*/
+pub fn get_forkchoice_shard_store<C: Config>(anchor_state: &BeaconState<C>, shard: Shard) -> ShardStore<C> {
+    let shard_block = ShardBlock{
+        beacon_parent_root: /* TODO */,
+        body: /* TODO */,
+        proposer_index: /* TODO */,
+        shard_parent_root: /* TODO */,
+        slot: compute_previous_slot(anchor_state.slot),
+        shard};
+    let signed_shard_block = SignedShardBlock{
+        message: shard_block,
+        signature: /* TODO */,
+    };
+    let signed_blocks = HashMap::new();
     signed_blocks.insert(
         anchor_state.shard_states[shard as usize].latest_block_root,
         signed_shard_block,
     );
-    let mut block_states: HashMap<ethereum_types::H256, ShardState> = HashMap::new();
+
+    let block_states: HashMap<H256, ShardState> = HashMap::new();
     block_states.insert(
         anchor_state.shard_states[shard as usize].latest_block_root,
         anchor_state.clone().shard_states[shard as usize],
     );
+
     ShardStore {
         shard,
-        signed_blocks: { signed_blocks },
-        block_states: { block_states },
+        signed_blocks,
+        block_states,
         ..Default::default()
     }
 }
 
-// This is for small unit tests
 #[cfg(test)]
 mod tests {
-    use crate::*;
+    use crate::compute_previous_slot;
+    use crate::Slot;
     #[test]
-    fn test_previous_slot() {
+    fn test_compute_previous_slot() {
         let five: Slot = 5;
         let six: Slot = 6;
         let zero: Slot = 0;
