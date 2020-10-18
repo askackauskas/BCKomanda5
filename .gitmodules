@@ -1,0 +1,4 @@
+[submodule "eth2.0-spec-tests"]
+	path = eth2.0-spec-tests
+	url = https://github.com/ethereum/eth2.0-spec-tests.git
+	branch = v1.0.0-rc.0
