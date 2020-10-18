@@ -1,7 +1,6 @@
-pub mod shard_transition_processing {
-    pub fn it_works() -> bool {
-        true
-    }
+
+pub fn it_works() -> bool {
+    true
 }
 
 #[cfg(test)]

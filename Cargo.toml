@@ -1,0 +1,54 @@
+[workspace]
+members = [
+    'shard_fork_choice',
+    'shard_transition_processing',
+    'types',
+    'bls',
+    'spec_test_utils',
+    'utils/ssz_new',
+    'utils/ssz_new_derive',
+]
+
+[patch.crates-io]
+# We have to override these because Lighthouse does it for some reason.
+# eth2_hashing     = { git = 'https://github.com/sigp/lighthouse', rev = '56ffe91f9093605737ca1c676ea3493a75b2cfe6' }
+# eth2_hashing     = { path = "./lighthouse/crypto/eth2_hashing" }
+eth2_hashing     = { git = 'https://github.com/SifraiHQ/lighthouse', rev = '3749ac7077c76cbad1c37b1c08841759e38d24a2' }
+
+# eth2_ssz         = { git = 'https://github.com/sigp/lighthouse', rev = '56ffe91f9093605737ca1c676ea3493a75b2cfe6' }
+# eth2_ssz         = { path = "./lighthouse/consensus/ssz" }
+eth2_ssz         = { git = 'https://github.com/SifraiHQ/lighthouse', rev = '3749ac7077c76cbad1c37b1c08841759e38d24a2' }
+
+# eth2_ssz_derive  = { git = 'https://github.com/sigp/lighthouse', rev = '56ffe91f9093605737ca1c676ea3493a75b2cfe6' }
+# eth2_ssz_derive  = { path = "./lighthouse/consensus/ssz_derive" }
+eth2_ssz_derive  = { git = 'https://github.com/SifraiHQ/lighthouse', rev = '3749ac7077c76cbad1c37b1c08841759e38d24a2' }
+
+# eth2_ssz_types   = { git = 'https://github.com/sigp/lighthouse', rev = '56ffe91f9093605737ca1c676ea3493a75b2cfe6' }
+# eth2_ssz_types   = { path = "./lighthouse/consensus/ssz_types" }
+eth2_ssz_types   = { git = 'https://github.com/SifraiHQ/lighthouse', rev = '3749ac7077c76cbad1c37b1c08841759e38d24a2' }
+
+# tree_hash        = { git = 'https://github.com/sigp/lighthouse', rev = '56ffe91f9093605737ca1c676ea3493a75b2cfe6' }
+# tree_hash        = {  path = "./lighthouse/consensus/tree_hash" }
+tree_hash        = { git = 'https://github.com/SifraiHQ/lighthouse', rev = '3749ac7077c76cbad1c37b1c08841759e38d24a2' }
+
+# tree_hash_derive = { git = 'https://github.com/sigp/lighthouse', rev = '56ffe91f9093605737ca1c676ea3493a75b2cfe6' }
+# tree_hash_derive = { path = "./lighthouse/consensus/tree_hash_derive" }
+tree_hash_derive = { git = 'https://github.com/SifraiHQ/lighthouse', rev = '3749ac7077c76cbad1c37b1c08841759e38d24a2' }
+
+# Unlike the crates above, these do not need to be overridden, but we do it
+# anyway to keep all references to the Lighthouse commit in one place.
+# bls              = { git = 'https://github.com/sigp/lighthouse', rev = '56ffe91f9093605737ca1c676ea3493a75b2cfe6' }
+# bls              = { path = "./lighthouse/crypto/bls" }
+bls              = { git = 'https://github.com/SifraiHQ/lighthouse', rev = '3749ac7077c76cbad1c37b1c08841759e38d24a2' }
+
+# environment      = { git = 'https://github.com/sigp/lighthouse', rev = '56ffe91f9093605737ca1c676ea3493a75b2cfe6' }
+# environment      = { path = "./lighthouse/lighthouse/environment" }
+environment      = { git = 'https://github.com/SifraiHQ/lighthouse', rev = '3749ac7077c76cbad1c37b1c08841759e38d24a2' }
+
+# eth2_libp2p      = { git = 'https://github.com/sigp/lighthouse', rev = '56ffe91f9093605737ca1c676ea3493a75b2cfe6' }
+# eth2_libp2p      = { path = "./lighthouse/beacon_node/eth2_libp2p" }
+eth2_libp2p      = { git = 'https://github.com/SifraiHQ/lighthouse', rev = '3749ac7077c76cbad1c37b1c08841759e38d24a2' }
+
+# types            = { git = 'https://github.com/sigp/lighthouse', rev = '56ffe91f9093605737ca1c676ea3493a75b2cfe6' }
+# types           = { path = "./lighthouse/consensus/types" }
+types            = { git = 'https://github.com/SifraiHQ/lighthouse', rev = '3749ac7077c76cbad1c37b1c08841759e38d24a2' }
