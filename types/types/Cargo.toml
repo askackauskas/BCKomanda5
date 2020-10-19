@@ -1,0 +1,25 @@
+[package]
+name = 'types'
+version = '0.1.0'
+authors = ['Saulius Grigaitis <saulius@dist.lt>']
+edition = '2018'
+
+[dependencies]
+anyhow_stable_backtrace = { path = '../anyhow_stable_backtrace' }
+bls = { path = '../bls' }
+derive_more = '0.99.11'
+easy-ext = '0.2.3'
+ethereum-types = '0.9.2'
+hex-literal = '0.3.1'
+nonzero_ext = '0.2.0'
+serde = { version = '1.0.116', features = ['derive', 'rc'] }
+smart-default = '0.6.0'
+ssz_new = { path = '../utils/ssz_new' }
+ssz_new_derive = { path = '../utils/ssz_new_derive' }
+tree_hash = '0.1.1'
+tree_hash_derive = '0.2.0'
+typenum = '1.12.0'
+
+[dev-dependencies]
+spec_test_utils = { path = '../spec_test_utils' }
+test-generator = '0.3.0'
