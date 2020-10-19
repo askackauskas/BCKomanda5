@@ -1,6 +1,6 @@
 [workspace]
 members = [
-    'shard_fork_choice',
+#    'shard_fork_choice',
     'shard_transition_processing',
     'anyhow_stable_backtrace',
     'bls',
