@@ -5,7 +5,7 @@ use types::{
     beacon_state::BeaconState,
     config::Config,
     containers::{ShardTransition, Attestation},
-    primitives::{CommitteeIndex, Root},
+    primitives::{CommitteeIndex, Root, Slot},
     //consts::,
 };
 use helper_functions::{

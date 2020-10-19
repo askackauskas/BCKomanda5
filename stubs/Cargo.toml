@@ -8,3 +8,5 @@ edition = "2018"
 ethereum-types = '0.9.2'
 anyhow_stable_backtrace = { path = '../anyhow_stable_backtrace' }
 types = { path = '../types' }
+hashing = { path = '../hashing' }
+bls = { path = '../bls' }

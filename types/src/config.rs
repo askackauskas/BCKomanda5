@@ -69,6 +69,7 @@ pub trait Config: Clone + Eq + Default + Debug + Send + Sync + Serialize + 'stat
     const DOMAIN_DEPOSIT: DomainType = 3;
     const DOMAIN_RANDAO: DomainType = 2;
     const DOMAIN_SELECTION_PROOF: DomainType = 5;
+    const DOMAIN_SHARD_PROPOSAL: DomainType = 81;
     const DOMAIN_VOLUNTARY_EXIT: DomainType = 4;
     const EFFECTIVE_BALANCE_INCREMENT: Gwei = 1_000_000_000;
     const EJECTION_BALANCE: Gwei = 16_000_000_000;

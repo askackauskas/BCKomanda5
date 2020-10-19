@@ -3,8 +3,9 @@ use types::{
     beacon_state::BeaconState,
     config::Config,
     containers::AttestationData,
-    primitives::{CommitteeIndex,Epoch,Shard,Slot,Gwei,ValidatorIndex},
+    primitives::{CommitteeIndex,Epoch,Shard,Slot,Gwei,ValidatorIndex,DomainType,Domain},
 };
+use hashing::ZERO_HASHES;
 use ethereum_types::H256;
 use anyhow::Result;
 
@@ -26,6 +27,13 @@ pub fn compute_previous_slot(slot: Slot) -> Slot {
     } else {
         return slot;
     }
+}
+
+pub fn optional_aggregate_verify(pubkeys: Vec<BLSPubkey>,
+                                 messages: Vec<Bytes32>,
+                                 signature: BLSSignature) -> bool
+{
+    true
 }
 
 pub fn get_committee_count_per_slot<C: Config>(_state: &BeaconState<C>, _epoch: Epoch) -> u64 {
@@ -62,6 +70,10 @@ pub fn compute_updated_gasprice(prev_gasprice: Gwei, shard_block_length: u64) ->
 
 pub fn get_offset_slots<C: Config>(state: &BeaconState<C>, shard: Shard) -> Vec<Slot> {
     compute_offset_slots(get_latest_slot_for_shard(&state, shard), state.slot)
+}
+
+pub fn get_domain<C: Config>(state: &BeaconState<C>, domain_type: DomainType, epoch: Epoch) -> Domain {
+    ZERO_HASHES[0]
 }
 
 pub fn get_shard_proposer_index<C: Config>(beacon_state: &BeaconState<C>, slot: Slot, shard: Shard) -> ValidatorIndex {

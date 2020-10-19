@@ -1,24 +1,29 @@
 use std::vec::Vec;
 use hashing::ZERO_HASHES;
-use tree_hash::TreeHash as _;
+use tree_hash::TreeHash;
 use anyhow::{ensure,Result};
 use thiserror::Error;
 use types::{
     beacon_state::BeaconState,
     config::Config,
     containers::{ShardTransition, ShardBlockHeader},
-    primitives::{Shard, Slot, ValidatorIndex, Gwei, H256},
+    primitives::{Shard, Slot, Gwei, H256},
     consts::GENESIS_SLOT,
 };
 use helper_functions::{
     accessors::get_block_root_at_slot,
-    misc::compute_previous_slot,
+    misc::{
+        compute_previous_slot,
+        compute_signing_root,
+        compute_epoch_at_slot},
 };
 /* TODO add all these stubs to Stubs crate and create a commit/pull request */
 use stubs::beacon_chain::{
     get_offset_slots,
     get_shard_proposer_index,
     compute_updated_gasprice,
+    get_domain,
+    optional_aggregate_verify,
 };
 
 #[allow(clippy::large_enum_variant)]
@@ -102,7 +107,7 @@ pub fn apply_shard_transition<C: Config>(state: &mut BeaconState<C>, shard: Shar
             0 => {
                 // Must have a stub for `shard_data_root` if empty slot
                 ensure!(
-                    transition.shard_data_roots[i] == ZERO_HASHES[0],
+                    transition.shard_data_roots[i] == ZERO_HASHES[0], // TODO: find out what is the default value for root stub
                     Error::NonEmptyRoot{ root: transition.shard_data_roots[i] });
             }
             _ => {
@@ -116,7 +121,7 @@ pub fn apply_shard_transition<C: Config>(state: &mut BeaconState<C>, shard: Shar
                     proposer_index,
                     body_root: transition.shard_data_roots[i],
                 };
-                shard_parent_root = header.tree_hash();
+                shard_parent_root = header.tree_hash_root();
                 headers.push(header);
                 proposers.push(proposer_index);
             }
@@ -130,7 +135,8 @@ pub fn apply_shard_transition<C: Config>(state: &mut BeaconState<C>, shard: Shar
         pubkeys.push(state.validators[proposer as usize].pubkey);
     }
     for header in headers {
-        signing_roots.push(compute_signing_root(header, get_domain(state, DOMAIN_SHARD_PROPOSAL, compute_epoch_at_slot(header.slot))));
+        /* TODO: Create new const DOMAIN_SHARD_PROPOSAL in Config */ 
+        signing_roots.push(compute_signing_root(&header, get_domain(state, C::DOMAIN_SHARD_PROPOSAL, compute_epoch_at_slot::<C>(header.slot))));
     }
 
     // Verify combined proposer signature
