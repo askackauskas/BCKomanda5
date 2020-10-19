@@ -1,11 +1,9 @@
 [package]
 name = "shard_fork_choice"
 version = "0.1.0"
-authors = ["intager S <intagers@gmail.com>"]
 edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-ethereum-types = '0.9'
-# bls_eth_rust = { git = 'https://github.com/sifraihq/bls-eth-rust' }
+types = { path = '../types' }
