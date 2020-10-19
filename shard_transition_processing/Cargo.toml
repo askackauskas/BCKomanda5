@@ -7,6 +7,10 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+thiserror = '1.0.21'
+hashing = { path = '../hashing' }
+tree_hash = '0.1.1'
 types = { path = '../types' }
 helper_functions = { path = '../helper_functions' }
 stubs = { path = '../stubs' }
+anyhow_stable_backtrace = { path = '../anyhow_stable_backtrace' }

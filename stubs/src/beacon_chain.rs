@@ -1,8 +1,9 @@
 use std::ptr::eq;
 use types::{
-    beacon_state::BeaconState, config::Config, containers::AttestationData,
-    primitives::CommitteeIndex, primitives::Epoch, primitives::Shard, primitives::Slot,
-    primitives::ValidatorIndex,
+    beacon_state::BeaconState,
+    config::Config,
+    containers::AttestationData,
+    primitives::{CommitteeIndex,Epoch,Shard,Slot,Gwei,ValidatorIndex},
 };
 use ethereum_types::H256;
 use anyhow::Result;
@@ -54,6 +55,17 @@ pub fn compute_offset_slots(start_slot: Slot, end_slot: Slot) -> Vec<u64> {
         }
     }
     v
+}
+pub fn compute_updated_gasprice(prev_gasprice: Gwei, shard_block_length: u64) -> Gwei {
+    0
+}
+
+pub fn get_offset_slots<C: Config>(state: &BeaconState<C>, shard: Shard) -> Vec<Slot> {
+    compute_offset_slots(get_latest_slot_for_shard(&state, shard), state.slot)
+}
+
+pub fn get_shard_proposer_index<C: Config>(beacon_state: &BeaconState<C>, slot: Slot, shard: Shard) -> ValidatorIndex {
+    0
 }
 
 pub fn get_latest_slot_for_shard<C: Config>(state: &BeaconState<C>, shard: Shard) -> Slot {

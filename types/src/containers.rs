@@ -211,7 +211,20 @@ pub struct ShardBlock<C: Config> {
     pub body: ByteList<C::MaxShardBlockSize>,
 }
 
-#[derive(Clone, PartialEq, Debug, Deserialize, Serialize, SszEncode, SszDecode, TreeHash)]
+impl<C:Config> Default for ShardBlock<C> {
+    fn default() -> ShardBlock<C> {
+        ShardBlock {
+            shard_parent_root: H256::default(),
+            beacon_parent_root: H256::default(),
+            slot: Slot::default(),
+            shard: Shard::default(),
+            proposer_index: ValidatorIndex::default(),
+            body: ByteList::from_bytes(Vec::new()).unwrap()
+        }
+    }
+}
+
+#[derive(Clone, PartialEq, Debug, Default, Deserialize, Serialize, SszEncode, SszDecode, TreeHash)]
 pub struct SignedShardBlock<C: Config> {
     pub message: ShardBlock<C>,
     pub signature: SignatureBytes,
