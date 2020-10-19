@@ -2,12 +2,12 @@ use std::vec::Vec;
 use hashing::ZERO_HASHES;
 use tree_hash::TreeHash;
 use anyhow::{ensure,Result};
-use thiserror::Error;
+use super::errors::Error;
 use types::{
     beacon_state::BeaconState,
     config::Config,
     containers::{ShardTransition, ShardBlockHeader},
-    primitives::{Shard, Slot, Gwei, H256},
+    primitives::Shard,
     consts::GENESIS_SLOT,
 };
 use helper_functions::{
@@ -25,33 +25,6 @@ use stubs::beacon_chain::{
     get_domain,
     optional_aggregate_verify,
 };
-
-#[allow(clippy::large_enum_variant)]
-#[derive(Debug, Error)]
-enum Error/*<C: Config>*/ {
-    #[error("Invalid slot ({slot} <= {genesis_slot})")]
-    InvalidSlot {
-        slot: Slot,
-        genesis_slot: Slot },
-    #[error("Invalid # of transition data roots ({offset_slots}, {shard_data_roots}, {shard_states}, {shard_block_lengths})")]
-    IncorrectDataRootCount{
-        offset_slots : usize,
-        shard_data_roots: usize,
-        shard_states: usize,
-        shard_block_lengths: usize },
-    #[error("Incorrect slot ({slot} != {expected_slot})")]
-    IncorrectSlot {
-        slot: Slot,
-        expected_slot: Slot },
-    #[error("Incorrect gasprice ({gasprice} != {expected_gasprice})")]
-    IncorrectGasprice{
-        gasprice: Gwei,
-        expected_gasprice: Gwei },
-    #[error("Expected empty root ({root})")]
-    NonEmptyRoot{ root: H256 },
-    #[error("Aggregate signature verification for shard transition has failed!")]
-    UnverifiedAggregateSignature{},
-}
 
 // TODO Should be implemented as a method (impl) for BeaconState?
 pub fn apply_shard_transition<C: Config>(state: &mut BeaconState<C>, shard: Shard, transition: ShardTransition<C>) -> Result<()> {
