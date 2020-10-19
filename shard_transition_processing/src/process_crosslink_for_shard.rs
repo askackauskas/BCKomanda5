@@ -1,6 +1,7 @@
 use std::vec::Vec;
-use anyhow::{ensure,Result};
+use anyhow::{Result};
 use thiserror::Error;
+use hashing::ZERO_HASHES;
 use types::{
     beacon_state::BeaconState,
     config::Config,
@@ -8,6 +9,7 @@ use types::{
     primitives::{CommitteeIndex, Root, Slot},
     //consts::,
 };
+/*
 use helper_functions::{
     
 };
@@ -15,6 +17,7 @@ use helper_functions::{
 use stubs::beacon_chain::{
     
 };
+*/
 
 #[allow(clippy::large_enum_variant)]
 #[derive(Debug, Error)]
@@ -30,7 +33,7 @@ pub fn process_crosslink_for_shard<C: Config>(state: &BeaconState<C>,
                                 shard_transition: ShardTransition<C>,
                                 attestations: Vec<Attestation<C>>) -> Result<Root>
 {
-    Ok(Root::new())
+    Ok(ZERO_HASHES[0])
 }
 
 /*
