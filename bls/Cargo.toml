@@ -1,0 +1,17 @@
+[package]
+name = 'bls'
+version = '0.1.0'
+edition = '2018'
+
+[dependencies]
+bls_eth_rust = { git = 'https://github.com/sifraihq/bls-eth-rust' }
+derive_more = '0.99.11'
+fixed-hash = '0.6.1'
+impl-serde = '0.3.1'
+serde = { version = '1.0.116', features = ['derive'] }
+serde-hex = '0.1.0'
+ssz = { package = 'ssz_new', path = '../utils/ssz_new' }
+static_assertions = '1.1.0'
+thiserror = '1.0.21'
+tree_hash = '0.1.1'
+zeroize = { version = '1.1.1', features = ['zeroize_derive'] }

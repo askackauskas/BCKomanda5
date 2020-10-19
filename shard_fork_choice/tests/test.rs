@@ -1,35 +1,33 @@
-use shard_fork_choice::*;
-use std::collections::HashMap;
-pub use ethereum_types::H256;
+// TODO: Re-write test
+
+
+/*use std::collections::HashMap;
+use types::{
+    beacon_state::BeaconState,
+    containers::{ShardState, ShardBlock, SignedShardBlock},
+    primitives::{H256},
+};
 
 #[test]
 fn get_forkchoice_shard_store_test() {
     let test_shard = 0;
     let shard_state = ShardState {
-        shard: test_shard,
+        slot: ,
+        gasprice: ,
         latest_block_root: H256([
             1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
             1, 1, 1,
         ]),
     };
-    let beacon_state = BeaconState {
-        slot: 2,
-        shard_states: [shard_state; 1024],
-    };
-    let shard_block = ShardBlock {
-        slot: 1,
-        shard: test_shard,
-    };
-    let signed_shard_block = SignedShardBlock {
-        message: shard_block,
-        signature: SignatureBytes::Placeholder
-    };
+    let beacon_state = BeaconState {};
+    let shard_block = ShardBlock::new(1, test_shard);
+    let signed_shard_block = SignedShardBlock::new(shard_block);
     let mut signed_blocks = HashMap::new();
     signed_blocks.insert(
         beacon_state.shard_states[test_shard as usize].latest_block_root,
         signed_shard_block,
     );
-    let mut block_states: HashMap<ethereum_types::H256, ShardState> = HashMap::new();
+    let mut block_states: HashMap<H256, ShardState> = HashMap::new();
     block_states.insert(
         beacon_state.shard_states[test_shard as usize].latest_block_root,
         beacon_state.shard_states[test_shard as usize],
@@ -42,15 +40,8 @@ fn get_forkchoice_shard_store_test() {
     };
 
     assert_eq!(
-        get_forkchoice_shard_store(&beacon_state, test_shard),
+        get_forkchoice_shard_store<MainnetConfig>(&beacon_state, test_shard),
         shard_store
     );
-}
-
-/*
-#[test]
-fn new_test() {
-    let ss = ShardState{shard: 2, latest_block_root: H256(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1)};
-    let bs = BeaconState{slot: 2, shard_states[]};
 }
 */
