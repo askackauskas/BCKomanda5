@@ -29,9 +29,9 @@ pub fn compute_previous_slot(slot: Slot) -> Slot {
     }
 }
 
-pub fn optional_aggregate_verify(pubkeys: Vec<BLSPubkey>,
-                                 messages: Vec<Bytes32>,
-                                 signature: BLSSignature) -> bool
+pub fn optional_aggregate_verify(pubkeys: Vec<bls::PublicKeyBytes>,
+                                 messages: Vec<H256>,
+                                 signature: bls::SignatureBytes) -> bool
 {
     true
 }
