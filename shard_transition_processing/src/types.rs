@@ -2,9 +2,13 @@
 
 pub type Shard = u64;
 pub type Slot = u64;
+pub type ComiteeIndex = u64;
+pub type Root =  Bytes32;
+pub type Epoch = u64;
 use ethereum_types::H256;
 use std::collections::HashMap;
-use crate::config::MAX_SHARDS;
+use crate::configs::MAX_SHARDS;
+
 
 // Signature
 #[derive(Debug)]
@@ -68,3 +72,36 @@ impl PartialEq for SignedShardBlock {
         self.message == other.message
     }
 }
+pub struct ShardTransition{
+    start_slot: Slot,
+    shard_block_lenghts: Vec<u64>,
+    shard_data_roots: Bytes32,
+    shard_states: Vec<ShardState>,
+    proposer_signature_aggregate: u64// BLSSignature turetu but
+}
+pub struct Attestation{
+    aggregation_bits: Vec<u64>,//cia bitlist turetu but
+    data: AttestationData,
+    signature:u64// BLSSignature turetu but
+}
+pub struct AttestationData{
+    slot:Slot,
+    index:ComiteeIndex,
+    beacon_block_root:Root,
+    source: Checkpoint,
+    target: Checkpoint,
+    shard: Shard,
+    shard_head_root: Root,
+    shard_transition_root: Root
+}
+struct Checkpoint{
+    epoch: Epoch,
+    root: Root
+}
+
+
+
+pub struct Bytes32 {// daug kur naudoja Bytes32 tipa, tai toki radau nete ruste apsirasyt, bet ten lifetime buvo priskirtas, istryniau ji, nes nelabai dar suprantu kaip tai veikia
+    pub store: Vec<[ u8; 4]>,
+}
+
