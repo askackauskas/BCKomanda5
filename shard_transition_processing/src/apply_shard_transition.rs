@@ -1,3 +1,5 @@
+
+use anyhow::Result;
 use std::vec::Vec;
 use types::{
     beacon_state::BeaconState,
@@ -6,12 +8,16 @@ use types::{
     primitives::{Shard, Slot, ValidatorIndex},
 };
 use helper_functions::accessors::{
+    //get_offset_slots,
+    //get_shard_proposer_index,
+    get_block_root_at_slot,
+};
+use stubs::beacon_chain::{
     get_offset_slots,
     get_shard_proposer_index,
-    get_block_root_at_slot,
-}
+};
 
-pub fn apply_shard_transition<C: Config>(state: BeaconState<C>, shard: Shard, transition: ShardTransition<C>) > Result() {
+pub fn apply_shard_transition<C: Config>(state: BeaconState<C>, shard: Shard, transition: ShardTransition<C>) -> Result() {
     /*// TODO: only need to check it once when phase 1 starts
     assert state.slot > PHASE_1_FORK_SLOT*/
 
