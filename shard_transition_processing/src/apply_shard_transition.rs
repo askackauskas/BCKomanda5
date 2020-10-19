@@ -5,21 +5,13 @@ use types::{
     containers::{ShardTransition,ShardBlockHeader},
     primitives::{Shard, Slot, ValidatorIndex},
 };
-
-// Stubs for functions yet to be implemented:
-
-fn get_offset_slots<C: Config>(state: BeaconState<C>, shard: Shard) -> Vec<Slot> {
-    Vec::new()
+use helper_functions::accessors::{
+    get_offset_slots,
+    get_shard_proposer_index,
+    get_block_root_at_slot,
 }
 
-fn get_shard_proposer_index<C: Config>(beacon_state: BeaconState<C>, slot: &Slot, shard: Shard) -> Validato
-}
-
-get_block_root_at_slot(state, offset_slot)
-
-// Shard transition processing:
-
-pub fn apply_shard_transition<C: Config>(state: BeaconState<C>, shard: Shard, transition: ShardTransition<C>) {
+pub fn apply_shard_transition<C: Config>(state: BeaconState<C>, shard: Shard, transition: ShardTransition<C>) > Result() {
     /*// TODO: only need to check it once when phase 1 starts
     assert state.slot > PHASE_1_FORK_SLOT*/
 
@@ -41,8 +33,10 @@ pub fn apply_shard_transition<C: Config>(state: BeaconState<C>, shard: Shard, tr
         let shard_block_length = transition.shard_block_lengths[i];
         let shard_state = transition.shard_states[i];
         // Verify correct calculation of gas prices and slots
-        /*assert shard_state.gasprice == compute_updated_gasprice(prev_gasprice, shard_block_length)
-        assert shard_state.slot == offset_slot*/
+        if shard_state.gasprice != compute_updated_gasprice(prev_gasprice, shard_block_length)
+            return Error();
+        if shard_state.slot != offset_slot
+            return Error();
         // Collect the non-empty proposals result
         match shard_block_length {
             0 => {
@@ -50,22 +44,24 @@ pub fn apply_shard_transition<C: Config>(state: BeaconState<C>, shard: Shard, tr
                 /*assert transition.shard_data_roots[i] == Root()*/
             }
             _ => {
-                let proposal_index = get_shard_proposer_index(state, offset_slot, shard);
+                let proposer_index = get_shard_proposer_index(state, offset_slot, shard);
                 // Reconstruct shard headers
                 let header = ShardBlockHeader(
                     shard_parent_root,
                     beacon_parent_root: get_block_root_at_slot(state, offset_slot),
-                    slot=offset_slot,
-                    shard=shard,
-                    proposer_index=proposal_index,
-                    body_root=transition.shard_data_roots[i]
+                    slot: offset_slot,
+                    shard,
+                    proposer_index,
+                    body_root: transition.shard_data_roots[i],
                 )
                 shard_parent_root = hash_tree_root(header)
                 headers.append(header)
-                proposers.append(proposal_index)
+                proposers.append(proposer_index)
             }
         }
         prev_gasprice = shard_state.gasprice
+
+        Ok()
     }
 
     /*let pubkeys = [state.validators[proposer].pubkey for proposer in proposers]

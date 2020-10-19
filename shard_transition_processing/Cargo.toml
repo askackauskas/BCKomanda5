@@ -8,3 +8,4 @@ edition = "2018"
 
 [dependencies]
 types = { path = '../types' }
+helper_functions = { path = '../helper_functions' }
