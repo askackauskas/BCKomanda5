@@ -2,9 +2,13 @@
 members = [
     'shard_fork_choice',
     'shard_transition_processing',
-    'types',
+    'anyhow_stable_backtrace',
     'bls',
+    'hashing',
+    'helper_functions',
     'spec_test_utils',
+    'stubs',
+    'types',
     'utils/ssz_new',
     'utils/ssz_new_derive',
 ]

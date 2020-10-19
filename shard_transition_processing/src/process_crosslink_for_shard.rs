@@ -25,10 +25,10 @@ enum Error/*<C: Config>*/ {
         genesis_slot: Slot },
 }
 
-pub fn process_crosslink_for_shard(state: &BeaconState,
+pub fn process_crosslink_for_shard<C: Config>(state: &BeaconState<C>,
                                 committee_index: CommitteeIndex,
-                                shard_transition: ShardTransition,
-                                attestations: Vec<Attestation>) -> Result<Root>
+                                shard_transition: ShardTransition<C>,
+                                attestations: Vec<Attestation<C>>) -> Result<Root>
 {
     Ok(Root::new())
 }
