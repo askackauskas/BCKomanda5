@@ -63,7 +63,7 @@ pub fn get_forkchoice_shard_store<C: Config>(anchor_state: &BeaconState<C>, shar
     let block_states: HashMap<H256, ShardState> = HashMap::new();
     block_states.insert(
         anchor_state.shard_states[shard as usize].latest_block_root,
-        anchor_state.shard_states[shard as usize],
+        anchor_state.clone().shard_states[shard as usize],
     );
 
     ShardStore {
