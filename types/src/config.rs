@@ -100,6 +100,7 @@ pub trait Config: Clone + Eq + Default + Debug + Send + Sync + Serialize + 'stat
     const SECONDS_PER_ETH1_BLOCK: u64 = 14;
     const SHARD_COMMITTEE_PERIOD: u64 = 256;
     const SHUFFLE_ROUND_COUNT: u8 = 90;
+    const SLOTS_PER_EPOCH: u64 = 8;
     const TARGET_AGGREGATORS_PER_COMMITTEE: u64 = 16;
     const TARGET_COMMITTEE_SIZE: u64 = 128;
     const WHISTLEBLOWER_REWARD_QUOTIENT: u64 = 512;

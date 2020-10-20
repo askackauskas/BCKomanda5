@@ -14,7 +14,7 @@ use types::{
     beacon_state::BeaconState,
     config::Config,
     containers::{Attestation, AttestationData, IndexedAttestation},
-    primitives::{DomainType, Epoch, Gwei, Shard, Slot, ValidatorIndex},
+    primitives::{DomainType, Epoch, Gwei, Shard, Slot, ValidatorIndex, CommitteeIndex},
 };
 
 use crate::{cache, error::Error, misc, predicates::is_active_validator};
@@ -136,6 +136,22 @@ pub fn get_beacon_proposer_index_at_slot<C: Config>(
     let seed = hashing::hash(&seed_with_slot[..]);
 
     misc::compute_proposer_index(state, &indices, seed)
+}
+
+pub fn get_beacon_committee<C: Config>(state: &BeaconState<C>, slot: Slot, index: CommitteeIndex) -> Result<Vec::<ValidatorIndex>> {
+    /*
+    Return the beacon committee at ``slot`` for ``index``.
+    */
+    let epoch = misc::compute_epoch_at_slot::<C>(slot);
+    let committees_per_slot = get_committee_count_per_slot(state, epoch)?;
+
+    let indices: Vec::<ValidatorIndex> = get_active_validator_indices(state, epoch)?.collect();
+    let seed = get_seed(state, epoch, C::DOMAIN_BEACON_ATTESTER)?;
+    let index = (slot as u64 % C::SLOTS_PER_EPOCH) * committees_per_slot + index;
+    let count = committees_per_slot * C::SLOTS_PER_EPOCH;
+
+    let committee = misc::compute_committee::<C>(indices, seed, index, count)?;
+    Ok(committee)
 }
 
 pub fn get_total_balance<C: Config>(

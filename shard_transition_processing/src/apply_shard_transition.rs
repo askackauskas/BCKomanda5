@@ -1,13 +1,12 @@
 use std::vec::Vec;
-use hashing::ZERO_HASHES;
 use tree_hash::TreeHash;
 use anyhow::{ensure,Result};
-use super::errors::Error;
+use crate::error::Error;
 use types::{
     beacon_state::BeaconState,
     config::Config,
     containers::{ShardTransition, ShardBlockHeader},
-    primitives::Shard,
+    primitives::{Shard,H256},
     consts::GENESIS_SLOT,
 };
 use helper_functions::{
@@ -27,7 +26,7 @@ use stubs::beacon_chain::{
 };
 
 // TODO Should be implemented as a method (impl) for BeaconState?
-pub fn apply_shard_transition<C: Config>(state: &mut BeaconState<C>, shard: Shard, transition: ShardTransition<C>) -> Result<()> {
+pub fn apply_shard_transition<C: Config>(state: &mut BeaconState<C>, shard: Shard, transition: &ShardTransition<C>) -> Result<()> {
     ensure!(
         state.slot <= GENESIS_SLOT,
         Error::InvalidSlot{
@@ -36,10 +35,10 @@ pub fn apply_shard_transition<C: Config>(state: &mut BeaconState<C>, shard: Shar
         });
     // Correct data root count
     let offset_slots = get_offset_slots(state, shard);
-    ensure!(
+    ensure!( // TODO - shorter way to write?
         offset_slots.len() == transition.shard_data_roots.len() &&
         offset_slots.len() == transition.shard_states.len() &&
-        offset_slots.len() == transition.shard_block_lengths.len(),
+        offset_slots.len() == transition.shard_block_lengths.len(), 
         Error::IncorrectDataRootCount{
             offset_slots: offset_slots.len(),
             shard_data_roots: transition.shard_data_roots.len(),
@@ -80,7 +79,7 @@ pub fn apply_shard_transition<C: Config>(state: &mut BeaconState<C>, shard: Shar
             0 => {
                 // Must have a stub for `shard_data_root` if empty slot
                 ensure!(
-                    transition.shard_data_roots[i] == ZERO_HASHES[0], // TODO: find out what is the default value for root stub
+                    transition.shard_data_roots[i] == H256::default(),
                     Error::NonEmptyRoot{ root: transition.shard_data_roots[i] });
             }
             _ => {

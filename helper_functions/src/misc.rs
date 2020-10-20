@@ -171,6 +171,24 @@ pub fn pack_compact_validator (index: ValidatorIndex, slashed: bool, balance_in_
     return (index << 16) + ((slashed as u64) << 15) + balance_in_increments;
 }
 
+#[must_use]
+pub fn compute_committee<C: Config>(indices: Vec::<ValidatorIndex>,
+                      seed: H256,
+                      index: u64,
+                      count: u64
+) -> Result<Vec::<ValidatorIndex>> {
+    /*
+    Return the committee corresponding to ``indices``, ``seed``, ``index``, and committee ``count``.
+    */
+    let start = indices.len() as u64 * index / count;
+    let end = indices.len() as u64 * (index + 1) as u64 / count;
+    let mut committee = Vec::new();
+    for i in start..end {
+        committee.push(indices[compute_shuffled_index::<C>(i as u64, indices.len() as u64, seed)? as usize]);
+    }
+    Ok(committee)
+}
+
 #[cfg(test)]
 mod tests {
     use std::sync::Arc;

@@ -1,4 +1,4 @@
-use types::primitives::{Slot, Gwei, H256};
+use types::primitives::{Slot, Gwei, H256, Root};
 use thiserror::Error;
 
 #[allow(clippy::large_enum_variant)]
@@ -26,4 +26,10 @@ pub enum Error/*<C: Config>*/ {
     NonEmptyRoot{ root: H256 },
     #[error("Aggregate signature verification for shard transition has failed!")]
     UnverifiedAggregateSignature{},
+    #[error("No shard transition root found in non-empty shard transition!")]
+    MissingTransitionRoot{},
+    #[error("Incorrect data root ({root} != {expected_root})")]
+    IncorrectRoot{
+        root: Root,
+        expected_root: Root },
 }
