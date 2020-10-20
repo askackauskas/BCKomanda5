@@ -1,22 +1,22 @@
 use std::ptr::eq;
+use std::collections::HashSet;
 use types::{
     beacon_state::BeaconState,
     config::Config,
     containers::AttestationData,
     primitives::{CommitteeIndex,Epoch,Shard,Slot,Gwei,ValidatorIndex,DomainType,Domain},
 };
-use hashing::ZERO_HASHES;
 use ethereum_types::H256;
 use anyhow::Result;
 
 const SHARD_BLOCK_OFFSETS: [i32; 12] = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233];
 
-pub fn get_online_validator_indices<C: Config>(_state: &BeaconState<C>) -> Vec<ValidatorIndex> {
-    let mut set_of_validator_indexes = Vec::<ValidatorIndex>::new();
+pub fn get_online_validator_indices<C: Config>(_state: &BeaconState<C>) -> HashSet<ValidatorIndex> {
+    let mut set_of_validator_indexes = HashSet::<ValidatorIndex>::new();
 
     // push anything depending on your needs while implementing
-    set_of_validator_indexes.push(1 as u64);
-    set_of_validator_indexes.push(2 as u64);
+    set_of_validator_indexes.insert(1 as u64);
+    set_of_validator_indexes.insert(2 as u64);
 
     set_of_validator_indexes
 }
@@ -73,7 +73,7 @@ pub fn get_offset_slots<C: Config>(state: &BeaconState<C>, shard: Shard) -> Vec<
 }
 
 pub fn get_domain<C: Config>(state: &BeaconState<C>, domain_type: DomainType, epoch: Epoch) -> Domain {
-    ZERO_HASHES[0]
+    H256::default()
 }
 
 pub fn get_shard_proposer_index<C: Config>(beacon_state: &BeaconState<C>, slot: Slot, shard: Shard) -> ValidatorIndex {
@@ -106,7 +106,23 @@ pub fn compute_committee<C: Config>(
     new_vec.push(3 as ValidatorIndex);
     Ok(new_vec)
 }
-pub fn compute_epoch_at_slot<C: Config>(epoch: Epoch) -> Epoch{
 
-    return Epoch(slot // SLOTS_PER_EPOCH)
+#[must_use]
+pub fn get_base_reward<C: Config>(state: &BeaconState<C>, index: ValidatorIndex) -> Gwei {
+    /*let total_balance = get_total_active_balance(&state);
+    let effective_balance = state.validators[index].effective_balance;
+    
+    let base_reward = (effective_balance * BASE_REWARD_FACTOR / integer_squareroot(total_balance) / BASE_REWARDS_PER_EPOCH) as Gweil
+    base_reward*/
+    0 as Gwei
+}
+
+#[must_use]
+pub fn get_total_active_balance<C: Config>(state: &BeaconState<C>) -> Gwei {
+    /*
+    Return the combined effective balance of the active validators.
+    Note: ``get_total_balance`` returns ``EFFECTIVE_BALANCE_INCREMENT`` Gwei minimum to avoid divisions by zero.
+    */
+    //get_total_balance::<C>(state, set(get_active_validator_indices(state, get_current_epoch(state)))?)
+    0 as Gwei
 }

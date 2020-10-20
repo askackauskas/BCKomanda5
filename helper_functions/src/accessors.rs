@@ -138,6 +138,7 @@ pub fn get_beacon_proposer_index_at_slot<C: Config>(
     misc::compute_proposer_index(state, &indices, seed)
 }
 
+#[must_use]
 pub fn get_beacon_committee<C: Config>(state: &BeaconState<C>, slot: Slot, index: CommitteeIndex) -> Result<Vec::<ValidatorIndex>> {
     /*
     Return the beacon committee at ``slot`` for ``index``.

@@ -1,5 +1,6 @@
 use std::vec::Vec;
 use std::collections::{BTreeSet,HashSet};
+use std::iter::FromIterator;
 use itertools::izip;
 use anyhow::{ensure,Result};
 use crate::error::Error;
@@ -14,12 +15,20 @@ use helper_functions::{
     misc::compute_previous_slot,
     accessors::{
         get_beacon_committee,
-        },
+        get_attesting_indices,
+        get_beacon_proposer_index,
+        get_total_balance},
+    mutators::{increase_balance,decrease_balance},
 };
 /* TODO add all these stubs to Stubs crate and create a commit/pull request */
 use stubs::beacon_chain::{
     get_online_validator_indices,
+    compute_shard_from_committee_index,
+    get_base_reward,
+    get_offset_slots,
+    get_shard_proposer_index,
 };
+use crate::apply_shard_transition::apply_shard_transition;
 
 pub fn process_crosslink_for_shard<C: Config>(state: &mut BeaconState<C>,
                                 committee_index: CommitteeIndex,
@@ -27,7 +36,7 @@ pub fn process_crosslink_for_shard<C: Config>(state: &mut BeaconState<C>,
                                 attestations: Vec<Attestation<C>>) -> Result<Root>
 {
     let on_time_attestation_slot = compute_previous_slot(state.slot);
-    let committee = get_beacon_committee(state, on_time_attestation_slot, committee_index);
+    let committee = HashSet::from_iter(get_beacon_committee(state, on_time_attestation_slot, committee_index)?);
     let online_indices = get_online_validator_indices(state);
     let shard = compute_shard_from_committee_index(state, committee_index, on_time_attestation_slot);
 
@@ -43,18 +52,16 @@ pub fn process_crosslink_for_shard<C: Config>(state: &mut BeaconState<C>,
                 transition_attestations.push(a);
             }
         }
-        let transition_participants = HashSet::<ValidatorIndex>::new();
+        let mut transition_participants = HashSet::<ValidatorIndex>::new();
         for attestation in transition_attestations {
-            let participants = get_attesting_indices(state, attestation.data, attestation.aggregation_bits);
+            let participants: Vec::<ValidatorIndex> = get_attesting_indices(state, &attestation.data, &attestation.aggregation_bits)?.collect();
             transition_participants.extend(&participants);
         }
 
-        let enough_online_stake = 
-            get_total_balance(state, online_indices.intersection(transition_participants)) * 3 >=
-            get_total_balance(state, online_indices.intersection(committee)) * 2
-        ;
+        let stake = get_total_balance(state, online_indices.intersection(&transition_participants))? as u64 * 3;
+        let min_stake = get_total_balance(state, online_indices.intersection(&committee).collect())? as u64 * 2;
         // If not enough stake, try next transition root
-        if enough_online_stake == false {
+        if stake < min_stake {
             continue;
         }
 
@@ -77,9 +84,9 @@ pub fn process_crosslink_for_shard<C: Config>(state: &mut BeaconState<C>,
         }
 
         // Apply transition
-        apply_shard_transition(&state, shard, &shard_transition);
+        apply_shard_transition(&mut state, shard, &shard_transition);
         // Apply proposer reward and cost
-        let beacon_proposer_index = get_beacon_proposer_index(&state);
+        let beacon_proposer_index = get_beacon_proposer_index(&state)?;
         let mut estimated_attester_reward = 0;
         for attester in transition_participants {
             estimated_attester_reward += get_base_reward(&state, attester);
@@ -87,9 +94,9 @@ pub fn process_crosslink_for_shard<C: Config>(state: &mut BeaconState<C>,
         let proposer_reward = (estimated_attester_reward / C::PROPOSER_REWARD_QUOTIENT) as Gwei;
         increase_balance(state, beacon_proposer_index, proposer_reward);
         let states_slots_lengths = izip!(
-            shard_transition.shard_states,
+            shard_transition.shard_states.iter(),
             get_offset_slots(&state, shard),
-            shard_transition.shard_block_lengths
+            shard_transition.shard_block_lengths.iter()
         );
         for (shard_state, slot, length) in states_slots_lengths {
             let proposer_index = get_shard_proposer_index(state, slot, shard);
@@ -97,7 +104,7 @@ pub fn process_crosslink_for_shard<C: Config>(state: &mut BeaconState<C>,
         }
 
         // Return winning transition root
-        return shard_transition_root;
+        return Ok(shard_transition_root);
     }
 
     // No winning transition root, ensure empty and return empty root
