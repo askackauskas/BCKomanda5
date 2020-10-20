@@ -106,3 +106,7 @@ pub fn compute_committee<C: Config>(
     new_vec.push(3 as ValidatorIndex);
     Ok(new_vec)
 }
+pub fn compute_epoch_at_slot<C: Config>(epoch: Epoch) -> Epoch{
+
+    return Epoch(slot // SLOTS_PER_EPOCH)
+}
