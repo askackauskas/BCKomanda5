@@ -33,5 +33,5 @@ pub enum Error/*<C: Config>*/ {
         root: Root,
         expected_root: Root },
     #[error("Shard transition in Shard transition processing is not empty")]
-    NotEmtpyShardTransition{}
+    NotEmptyShardTransition{}
 }
