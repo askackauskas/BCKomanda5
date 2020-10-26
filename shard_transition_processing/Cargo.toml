@@ -14,3 +14,4 @@ types = { path = '../types' }
 helper_functions = { path = '../helper_functions' }
 stubs = { path = '../stubs' }
 anyhow_stable_backtrace = { path = '../anyhow_stable_backtrace' }
+ssz_new = { path = '../utils/ssz_new' }

@@ -32,4 +32,6 @@ pub enum Error/*<C: Config>*/ {
     IncorrectRoot{
         root: Root,
         expected_root: Root },
+    #[error("Shard transition in Shard transition processing is not empty")]
+    NotEmtpyShardTransition{}
 }
