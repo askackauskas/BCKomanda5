@@ -8,8 +8,8 @@ use types::{
     beacon_state::BeaconState,
     config::Config,
     consts::FAR_FUTURE_EPOCH,
-    containers::{AttestationData, IndexedAttestation, Validator, PendingAttestation},
-    primitives::{AggregatePublicKey, AggregateSignature, Epoch, H256, Root, CommitteeIndex},
+    containers::{AttestationData, IndexedAttestation, PendingAttestation, Validator},
+    primitives::{AggregatePublicKey, AggregateSignature, CommitteeIndex, Epoch, Root, H256},
 };
 
 use crate::{accessors, error::Error, misc};
@@ -128,12 +128,16 @@ pub fn is_on_time_attestation<C: Config>(
 ) -> bool {
     misc::compute_previous_slot(state.slot) == attestation_data.slot
 }
-pub fn is_winning_attestation<C:Config>(state: &BeaconState<C>,attestation: PendingAttestation<C>,committee_index: CommitteeIndex,winning_root: Root) -> bool{
-
- 
-is_on_time_attestation(state, &attestation.data) && attestation.data.index == committee_index && attestation.data.shard_transition_root == winning_root
-
-    }
+pub fn is_winning_attestation<C: Config>(
+    state: &BeaconState<C>,
+    attestation: PendingAttestation<C>,
+    committee_index: CommitteeIndex,
+    winning_root: Root,
+) -> bool {
+    is_on_time_attestation(state, &attestation.data)
+        && attestation.data.index == committee_index
+        && attestation.data.shard_transition_root == winning_root
+}
 
 #[cfg(test)]
 mod tests {

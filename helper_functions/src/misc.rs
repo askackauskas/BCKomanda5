@@ -167,16 +167,21 @@ pub fn compute_previous_slot(slot: Slot) -> Slot {
 }
 
 #[must_use]
-pub fn pack_compact_validator (index: ValidatorIndex, slashed: bool, balance_in_increments: u64) -> u64 {
+pub fn pack_compact_validator(
+    index: ValidatorIndex,
+    slashed: bool,
+    balance_in_increments: u64,
+) -> u64 {
     return (index << 16) + ((slashed as u64) << 15) + balance_in_increments;
 }
 
 #[must_use]
-pub fn compute_committee<C: Config>(indices: Vec::<ValidatorIndex>,
-                      seed: H256,
-                      index: u64,
-                      count: u64
-) -> Result<Vec::<ValidatorIndex>> {
+pub fn compute_committee<C: Config>(
+    indices: Vec<ValidatorIndex>,
+    seed: H256,
+    index: u64,
+    count: u64,
+) -> Result<Vec<ValidatorIndex>> {
     /*
     Return the committee corresponding to ``indices``, ``seed``, ``index``, and committee ``count``.
     */
@@ -184,7 +189,9 @@ pub fn compute_committee<C: Config>(indices: Vec::<ValidatorIndex>,
     let end = indices.len() as u64 * (index + 1) as u64 / count;
     let mut committee = Vec::new();
     for i in start..end {
-        committee.push(indices[compute_shuffled_index::<C>(i as u64, indices.len() as u64, seed)? as usize]);
+        committee.push(
+            indices[compute_shuffled_index::<C>(i as u64, indices.len() as u64, seed)? as usize],
+        );
     }
     Ok(committee)
 }
@@ -292,10 +299,13 @@ mod tests {
 
     #[test]
     fn test_pack_compact_validator() {
-        let index:ValidatorIndex = 54321; 
-        let slashed:bool = true;
+        let index: ValidatorIndex = 54321;
+        let slashed: bool = true;
         let effective_balance_increment = 12345; // up to 15b
 
-        assert_eq!(pack_compact_validator(index, slashed, effective_balance_increment), 3560026169);
+        assert_eq!(
+            pack_compact_validator(index, slashed, effective_balance_increment),
+            3560026169
+        );
     }
 }

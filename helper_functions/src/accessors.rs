@@ -14,7 +14,7 @@ use types::{
     beacon_state::BeaconState,
     config::Config,
     containers::{Attestation, AttestationData, IndexedAttestation},
-    primitives::{DomainType, Epoch, Gwei, Shard, Slot, ValidatorIndex, CommitteeIndex},
+    primitives::{CommitteeIndex, DomainType, Epoch, Gwei, Shard, Slot, ValidatorIndex},
 };
 
 use crate::{cache, error::Error, misc, predicates::is_active_validator};
@@ -139,14 +139,18 @@ pub fn get_beacon_proposer_index_at_slot<C: Config>(
 }
 
 #[must_use]
-pub fn get_beacon_committee<C: Config>(state: &BeaconState<C>, slot: Slot, index: CommitteeIndex) -> Result<Vec::<ValidatorIndex>> {
+pub fn get_beacon_committee<C: Config>(
+    state: &BeaconState<C>,
+    slot: Slot,
+    index: CommitteeIndex,
+) -> Result<Vec<ValidatorIndex>> {
     /*
     Return the beacon committee at ``slot`` for ``index``.
     */
     let epoch = misc::compute_epoch_at_slot::<C>(slot);
     let committees_per_slot = get_committee_count_per_slot(state, epoch)?;
 
-    let indices: Vec::<ValidatorIndex> = get_active_validator_indices(state, epoch)?.collect();
+    let indices: Vec<ValidatorIndex> = get_active_validator_indices(state, epoch)?.collect();
     let seed = get_seed(state, epoch, C::DOMAIN_BEACON_ATTESTER)?;
     let index = (slot as u64 % C::SLOTS_PER_EPOCH) * committees_per_slot + index;
     let count = committees_per_slot * C::SLOTS_PER_EPOCH;
@@ -267,34 +271,41 @@ pub fn get_start_shard<C: Config>(state: &BeaconState<C>, slot: Slot) -> Shard {
     }
 }
 
-pub fn get_shard_committee<C: Config>(state: &BeaconState<C>, epoch: Epoch, shard: Shard) -> Result<Vec<ValidatorIndex>> {
-    let source_epoch = beacon_chain::compute_committee_source_epoch::<C>(epoch, C::SHARD_COMMITTEE_PERIOD);
-    
-	let active_validator_indices = get_active_validator_indices::<C>(state, epoch);
-	let active_validator_indices = match active_validator_indices {
-		Ok(active_validator_indices) => {
-			let mut active_validator_indices_vec = Vec::new();
-			for index in active_validator_indices {
-				active_validator_indices_vec.push(index);
-			}
-			active_validator_indices_vec
-		},
-		Err(_error) => { 
-			let active_validator_indices_vec = Vec::new();
-			active_validator_indices_vec
-			},
-	};
-	
+pub fn get_shard_committee<C: Config>(
+    state: &BeaconState<C>,
+    epoch: Epoch,
+    shard: Shard,
+) -> Result<Vec<ValidatorIndex>> {
+    let source_epoch =
+        beacon_chain::compute_committee_source_epoch::<C>(epoch, C::SHARD_COMMITTEE_PERIOD);
+
+    let active_validator_indices = get_active_validator_indices::<C>(state, epoch);
+    let active_validator_indices = match active_validator_indices {
+        Ok(active_validator_indices) => {
+            let mut active_validator_indices_vec = Vec::new();
+            for index in active_validator_indices {
+                active_validator_indices_vec.push(index);
+            }
+            active_validator_indices_vec
+        }
+        Err(_error) => {
+            let active_validator_indices_vec = Vec::new();
+            active_validator_indices_vec
+        }
+    };
+
     let seed = get_seed(state, source_epoch, 2164260864); // const DOMAIN_SHARD_COMMITTEE is missing so 2164260864 is added
     let seed = match seed {
-		Ok(seed) => seed,
-		Err(_error) => { panic!() }, // unclear what to return, needs to be fixed
-	};
-    
-    return beacon_chain::compute_committee::<C>(active_validator_indices,
+        Ok(seed) => seed,
+        Err(_error) => panic!(), // unclear what to return, needs to be fixed
+    };
+
+    return beacon_chain::compute_committee::<C>(
+        active_validator_indices,
         &seed,
         shard,
-        beacon_chain::get_active_shard_count::<C>(state));
+        beacon_chain::get_active_shard_count::<C>(state),
+    );
 }
 
 #[cfg(test)]

@@ -1,37 +1,33 @@
-use types::primitives::{Slot, Gwei, H256, Root};
 use thiserror::Error;
+use types::primitives::{Gwei, Root, Slot, H256};
 
 #[allow(clippy::large_enum_variant)]
 #[derive(Debug, Error)]
-pub enum Error/*<C: Config>*/ {
+pub enum Error /*<C: Config>*/ {
     #[error("Invalid slot ({slot} <= {genesis_slot})")]
-    InvalidSlot {
-        slot: Slot,
-        genesis_slot: Slot },
+    InvalidSlot { slot: Slot, genesis_slot: Slot },
     #[error("Invalid # of transition data roots ({offset_slots}, {shard_data_roots}, {shard_states}, {shard_block_lengths})")]
-    IncorrectDataRootCount{
-        offset_slots : usize,
+    IncorrectDataRootCount {
+        offset_slots: usize,
         shard_data_roots: usize,
         shard_states: usize,
-        shard_block_lengths: usize },
+        shard_block_lengths: usize,
+    },
     #[error("Incorrect slot ({slot} != {expected_slot})")]
-    IncorrectSlot {
-        slot: Slot,
-        expected_slot: Slot },
+    IncorrectSlot { slot: Slot, expected_slot: Slot },
     #[error("Incorrect gasprice ({gasprice} != {expected_gasprice})")]
-    IncorrectGasprice{
+    IncorrectGasprice {
         gasprice: Gwei,
-        expected_gasprice: Gwei },
+        expected_gasprice: Gwei,
+    },
     #[error("Expected empty root ({root})")]
-    NonEmptyRoot{ root: H256 },
+    NonEmptyRoot { root: H256 },
     #[error("Aggregate signature verification for shard transition has failed!")]
-    UnverifiedAggregateSignature{},
+    UnverifiedAggregateSignature {},
     #[error("No shard transition root found in non-empty shard transition!")]
-    MissingTransitionRoot{},
+    MissingTransitionRoot {},
     #[error("Incorrect data root ({root} != {expected_root})")]
-    IncorrectRoot{
-        root: Root,
-        expected_root: Root },
+    IncorrectRoot { root: Root, expected_root: Root },
     #[error("Shard transition in Shard transition processing is not empty")]
-    NotEmptyShardTransition{}
+    NotEmptyShardTransition {},
 }

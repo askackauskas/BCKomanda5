@@ -211,7 +211,7 @@ pub struct ShardBlock<C: Config> {
     pub body: ByteList<C::MaxShardBlockSize>,
 }
 
-impl<C:Config> Default for ShardBlock<C> {
+impl<C: Config> Default for ShardBlock<C> {
     fn default() -> ShardBlock<C> {
         ShardBlock {
             shard_parent_root: H256::default(),
@@ -219,12 +219,14 @@ impl<C:Config> Default for ShardBlock<C> {
             slot: Slot::default(),
             shard: Shard::default(),
             proposer_index: ValidatorIndex::default(),
-            body: ByteList::from_bytes(Vec::new()).unwrap()
+            body: ByteList::from_bytes(Vec::new()).unwrap(),
         }
     }
 }
 
-#[derive(Clone, PartialEq, Debug, Default, Deserialize, Serialize, SszEncode, SszDecode, TreeHash)]
+#[derive(
+    Clone, PartialEq, Debug, Default, Deserialize, Serialize, SszEncode, SszDecode, TreeHash,
+)]
 pub struct SignedShardBlock<C: Config> {
     pub message: ShardBlock<C>,
     pub signature: SignatureBytes,
